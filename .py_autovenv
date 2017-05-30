@@ -1,12 +1,13 @@
 #!/bin/bash
-# .py_virtualenv
+# .py_autovenv
 # 
 # What:
 #   The idea is virtualenv acts intuitively and smoothly like Git repositories:
 #
-#       1. In a project dir with a .venv subdir, that virtualenv is used.
-#       2. Navigate to another subdir, the .venv is still used.
-#       3. When the project is left, the .venv is deactivate automatically.
+#       - In a project dir with a .venv subdir, that virtualenv is used.
+#       - Navigate to another subdir, the .venv is still used.
+#       - When the project is left, the .venv is deactivate automatically.
+#       - Nested venv will be prioritized
 #
 #   You don't type `source .git/bin/activate` and `deactivate` when changing
 #   between git repositories, do you?
