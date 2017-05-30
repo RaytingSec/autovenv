@@ -49,12 +49,12 @@ function venv_auto() {
     venv_old="$(venv_curr)"
 
     if [ -z "$venv_new" -a -n "$venv_old" ]; then
-        echo "DEACTIVATE $venv_old"
+        echo "Deactivating $(_venv_name $venv_old)..."
         deactivate
     elif [ -n "$venv_new" -a "$venv_new" != "$venv_old" ]; then
-        echo "ACTIVATE $venv_new"
+        echo "Activating $(_venv_name $venv_new)..."
         # Uncomment if using your own PS1
-        VIRTUAL_ENV_DISABLE_PROMPT=1
+        # VIRTUAL_ENV_DISABLE_PROMPT=1
         source "$venv_new"/bin/activate
     fi
 }
@@ -70,6 +70,10 @@ _venv_ps1() {
         # Project dir's name
         # printf "$(basename $(dirname $(venv_curr)))"
     fi
+}
+
+_venv_name() {
+    printf $(basename $(dirname $1))
 }
 
 export PROMPT_COMMAND="venv_auto; $PROMPT_COMMAND"
