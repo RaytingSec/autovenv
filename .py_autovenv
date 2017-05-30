@@ -4,14 +4,14 @@
 # Print all possible candidates for venv relative to the directory $1. Used in
 # venv_find() for every directory starting from the current and up to the root.
 # Only .venv will be recognized, but additional names may be added.
-function venv_candidates () {
+function venv_candidates() {
     echo $1/.venv
 }
 
 # Finds the closest venv directory, starting from $1, and going up to the root.
 # If the target directory is not specified as an argument, current directory is used.
 # Prints the venv path found, or nothing otherwise.
-function venv_find () {
+function venv_find() {
     local venv_root=${1:-"."}
     local venv_found=""
 
@@ -36,7 +36,7 @@ function venv_find () {
 
 # Find current venv path using $VIRTUAL_ENV. Active venv will have variable set,
 # and deactivate function available.
-function venv_curr () {
+function venv_curr() {
     if [ -n "$VIRTUAL_ENV" -a "$(type -t deactivate)" = 'function' ]; then
         echo $VIRTUAL_ENV
     fi
@@ -44,7 +44,7 @@ function venv_curr () {
 
 # Activates the closest venv relative to the working dir, if different from
 # current active venv. Deactivates current venv when its directory tree is left.
-function venv_auto () {
+function venv_auto() {
     venv_new="$(venv_find)"
     venv_old="$(venv_curr)"
 
@@ -61,7 +61,7 @@ function venv_auto () {
 
 # Prints out the venv name for use in bash PS1, for example:
 #   PS1="$(_virtualenv_ps1) "$PS1
-_venv_ps1 () {
+_venv_ps1() {
     if [[ -z "$VIRTUAL_ENV" ]]; then
         printf ""
     else

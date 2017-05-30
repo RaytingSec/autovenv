@@ -1,9 +1,11 @@
 autovenv
 ==============================
 
+> Automatically activate and deactivate virtualenv as you change directories
+
 ## What
 
-The idea is venv acts intuitively and smoothly, taking inspiration from git repositories. You don't type `source .git/bin/activate` and `deactivate` when changing between repos, do you?
+The idea is that venv acts intuitively and smoothly, taking inspiration from git repositories. You don't type `source .git/bin/activate` and `deactivate` when changing between repos, do you?
 
 It must do the following
 
@@ -14,15 +16,23 @@ It must do the following
 
 ## Installation
 
-Add this line to your `.bashrc` or profile:
-    
+Add this line to your `.bashrc`:
+
 ```
 source /path/to/.py_autovenv
+```
+
+Restart your terminal session or run:
+
+```
+source ~/.bashrc
 ```
 
 Go to your project folder, run "virtualenv .venv", so your project folder
 has a .venv folder at the top level, next to your version control directory.
 For example:
+
+```
 .
 ├── .git
 │   ├── HEAD
@@ -36,6 +46,11 @@ For example:
     ├── bin
     ├── include
     └── lib
+```
+
+## Usage Guide
+
+Ensure your virtualenv folders are named `.venv`. If choose a different name, specify in `venv_candidates()`
 
 ## Credits
 
