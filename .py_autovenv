@@ -38,7 +38,7 @@
 #   https://nolar.info/automatically-activate-virtualenv-on-cd/
 #   https://gist.github.com/brianpkennedy/8943902
 
-_virtualenv_auto_activate() {
+_virtualenv_auto_activate () {
     # Deactivate if venv has been set, and project dir has been left
     # This allows virtualenv to remain active when in project subdirectory
     if [[ ! -z "$VIRTUAL_ENV" ]] && [[ ! "$(pwd)" =~ "$_VENV_NAME" ]]; then
@@ -66,7 +66,7 @@ _virtualenv_auto_activate() {
 
 # Add venv name to your PS1, for example:
 #   PS1="$(_virtualenv_ps1) "$PS1
-_virtualenv_ps1() {
+_virtualenv_ps1 () {
     if [[ -z "$VIRTUAL_ENV" ]]; then
         printf ""
     else
