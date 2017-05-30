@@ -2,12 +2,12 @@
 # .py_autovenv
 # 
 # What:
-#   The idea is virtualenv acts intuitively and smoothly like Git repositories:
+#   The idea is venv acts intuitively and smoothly like Git repositories:
 #
-#       - In a project dir with a .venv subdir, that virtualenv is used.
+#       - In a project dir with a .venv subdir, that venv is used.
 #       - Navigate to another subdir, the .venv is still used.
 #       - When the project is left, the .venv is deactivate automatically.
-#       - Nested venv will be prioritized
+#       - Closer venv will be prioritized in nested projects
 #
 #   You don't type `source .git/bin/activate` and `deactivate` when changing
 #   between git repositories, do you?
@@ -15,7 +15,7 @@
 # Installation:
 #   Add this line to your .bashrc or .bash-profile:
 #
-#       source /path/to/virtualenv-auto-activate.sh
+#       source /path/to/.py_autovenv
 #
 #   Go to your project folder, run "virtualenv .venv", so your project folder
 #   has a .venv folder at the top level, next to your version control directory.
@@ -34,31 +34,22 @@
 #       ├── include
 #       └── lib
 #
+#   You may also 
+#
 # See:
 #   https://nolar.info/automatically-activate-virtualenv-on-cd/
 #   https://gist.github.com/brianpkennedy/8943902
 
-#
-# Print all possible candidates for virtualenv relative to the directory $1.
-# Used in venv_find() for every directory starting from the current and up to the root.
-#
-#
-# Print all possible candidates for virtualenv relative to the directory $1.
-# Used in venv_find() for every directory starting from the current and up to the root.
-#
+# Print all possible candidates for venv relative to the directory $1. Used in
+# venv_find() for every directory starting from the current and up to the root.
+# Only .venv will be recognized, but additional names may be added.
 function venv_candidates () {
-    echo $1
     echo $1/.venv
-    echo $1/VENV
-    echo $1/ENV
-    echo $1.venv
 }
 
-#
-# Finds the closest virtualenv root directory, starting from $1, and going up to the root.
+# Finds the closest venv directory, starting from $1, and going up to the root.
 # If the target directory is not specified as an argument, current directory is used.
-# Prints the virtualenv path found, or nothing otherwise.
-#
+# Prints the venv path found, or nothing otherwise.
 function venv_find () {
     local venv_root=${1:-"."}
     local venv_found=""
@@ -67,8 +58,6 @@ function venv_find () {
     for (( i=10; i > 0; i-- )); do
         local venv_real=$(cd $venv_root && pwd -P)
         local venv_name=$(basename $venv_real)
-
-        # echo REAL=$venv_real >&2
         for candidate in $( venv_candidates $venv_real ) ; do
             # echo CANDIDATE=$candidate >&2
             if [ -f "$candidate/bin/activate" ]; then
@@ -84,44 +73,42 @@ function venv_find () {
     done
 }
 
-#
-# Find current virtualenv, and prints its path.
-# NB: The virtualenv must be activated in the current shell, or it will be ignored as if there is
-# NB: no active virtualenv at all. This is needed because current virtualenv is usually determined
-# NB: to be deactivated, and if it is not in the current shell, there is no "deactivate" function.
-#
+# Find current venv path using $VIRTUAL_ENV. Active venv will have variable set,
+# and deactivate function available.
 function venv_curr () {
     if [ -n "$VIRTUAL_ENV" -a "$(type -t deactivate)" = 'function' ]; then
         echo $VIRTUAL_ENV
     fi
 }
 
-#
-# Activates a virtualenv which we are in (or in any of its subfolders), according to our cwd.
-# Deactivates any virtualenv when we leave it (cd to a directory with no venv at all).
-#
+# Activates the closest venv relative to the working dir, if different from
+# current active venv. Deactivates current venv when its directory tree is left.
 function venv_auto () {
     venv_new="$(venv_find)"
     venv_old="$(venv_curr)"
-    bash_cmd=`basename $(expr "$BASH_COMMAND" : "\([^ ]*\)")`
 
-    # Special case for subshells - they will reactivate their own venv inside. This is needed
-    # to properly keep "deactivate" function inside subshells, and avoid recursive venvs.
-    if [ -n "$venv_old" -a \( "$bash_cmd" == "mc" -o "$bash_cmd" == "bash" -o "$bash_cmd" == "sh" \) ]; then
-#        echo "DEACTIVATE $venv_old FOR $bash_cmd"
-        deactivate
-    elif [ -z "$venv_new" -a -n "$venv_old" ]; then
-#        echo "DEACTIVATE $venv_old"
+    if [ -z "$venv_new" -a -n "$venv_old" ]; then
+        echo "DEACTIVATE $venv_old"
         deactivate
     elif [ -n "$venv_new" -a "$venv_new" != "$venv_old" ]; then
-#        echo "ACTIVATE $venv_new"
+        echo "ACTIVATE $venv_new"
+        # Uncomment if using your own PS1
+        VIRTUAL_ENV_DISABLE_PROMPT=1
         source "$venv_new"/bin/activate
-        prompt_colorize
     fi
 }
 
-#
-# Attach automatic virtualenv detection for any command or action in the shell.
-# Works well even if you change dirs in mc.
-#
-trap venv_auto DEBUG
+# Prints out the venv name for use in bash PS1, for example:
+#   PS1="$(_virtualenv_ps1) "$PS1
+_venv_ps1 () {
+    if [[ -z "$VIRTUAL_ENV" ]]; then
+        printf ""
+    else
+        # venv folder name
+        printf "$(basename $(venv_curr))"
+        # Project dir's name
+        # printf "$(basename $(dirname $(venv_curr)))"
+    fi
+}
+
+export PROMPT_COMMAND="venv_auto; $PROMPT_COMMAND"
