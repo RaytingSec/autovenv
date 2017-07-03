@@ -66,9 +66,9 @@ _venv_ps1() {
         printf ""
     else
         # venv folder name
-        printf "$(basename $(venv_curr))"
+        # printf "$(basename $(venv_curr))"
         # Project dir's name
-        # printf "$(basename $(dirname $(venv_curr)))"
+        printf "$(basename $(dirname $(venv_curr)))"
     fi
 }
 
