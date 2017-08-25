@@ -18,7 +18,7 @@ function venv_find() {
     # The cycle is just for the case with broken root folder detection - never do more than N iterations.
     for (( i=10; i > 0; i-- )); do
         local venv_real=$(cd $venv_root && pwd -P)
-        local venv_name=$(basename $venv_real)
+        local venv_name=$(basename "$venv_real")
         for candidate in $( venv_candidates $venv_real ) ; do
             # echo CANDIDATE=$candidate >&2
             if [ -f "$candidate/bin/activate" ]; then
