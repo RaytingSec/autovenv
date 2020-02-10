@@ -6,6 +6,7 @@
 # Only .venv will be recognized, but additional names may be added.
 function venv_candidates() {
     echo $1/.venv
+    echo $1/.env
 }
 
 # Finds the closest venv directory, starting from $1, and going up to the root.
